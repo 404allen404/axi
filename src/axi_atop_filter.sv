@@ -73,12 +73,23 @@ module axi_atop_filter #(
   cnt_t w_cnt_d, w_cnt_q;
 
   typedef enum logic [2:0] {
-    W_RESET, W_FEEDTHROUGH, BLOCK_AW, ABSORB_W, HOLD_B, INJECT_B, WAIT_R
+    W_RESET,
+    W_FEEDTHROUGH,
+    BLOCK_AW,
+    ABSORB_W,
+    HOLD_B,
+    INJECT_B,
+    WAIT_R
   } w_state_e;
   w_state_e w_state_d, w_state_q;
 
-  typedef enum logic [1:0] { R_RESET, R_FEEDTHROUGH, INJECT_R, R_HOLD } r_state_e;
-  r_state_e   r_state_d, r_state_q;
+  typedef enum logic [1:0] {
+    R_RESET,
+    R_FEEDTHROUGH,
+    INJECT_R,
+    R_HOLD
+  } r_state_e;
+  r_state_e r_state_d, r_state_q;
 
   typedef logic [AxiIdWidth-1:0] id_t;
   id_t id_d, id_q;

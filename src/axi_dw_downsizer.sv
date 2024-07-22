@@ -588,7 +588,7 @@ module axi_dw_downsizer #(
                     if ((b >= slv_port_offset) &&
                         (b - slv_port_offset < (1 << r_req_q.orig_ar_size)) &&
                         (b + mst_port_offset - slv_port_offset < AxiMstPortStrbWidth)) begin
-                      r_data[b] = mst_resp.r.data[8*(b + mst_port_offset - slv_port_offset) +: 8];
+                      r_data[b] = mst_resp.r.data[8*(b+mst_port_offset-slv_port_offset)+:8];
                     end
                   end
 
@@ -617,16 +617,18 @@ module axi_dw_downsizer #(
                   end
 
                   case (r_state_q)
-                    R_PASSTHROUGH : begin
+                    R_PASSTHROUGH: begin
                       // Forward data as soon as we can
                       r_req_d.r_valid = 1'b1;
                     end
 
                     R_INCR_DOWNSIZE, R_SPLIT_INCR_DOWNSIZE: begin
                       // Forward when the burst is finished, or after filling up a word
-                      if (r_req_q.burst_len == 0 ||
-                          (aligned_addr(r_req_d.ar.addr, r_req_q.orig_ar_size) !=
-                           aligned_addr(r_req_q.ar.addr, r_req_q.orig_ar_size)   )) begin
+                      if (r_req_q.burst_len == 0 || (aligned_addr(
+                          r_req_d.ar.addr, r_req_q.orig_ar_size
+                        ) != aligned_addr(
+                          r_req_q.ar.addr, r_req_q.orig_ar_size
+                        ))) begin
                         r_req_d.r_valid = 1'b1;
                       end
                     end
@@ -791,8 +793,8 @@ module axi_dw_downsizer #(
               if ((b >= slv_port_offset) &&
                   (b - slv_port_offset < (1 << w_req_q.orig_aw_size)) &&
                   (b + mst_port_offset - slv_port_offset < AxiMstPortStrbWidth)) begin
-                w_data[b + mst_port_offset - slv_port_offset]         = slv_req_i.w.data[8*b +: 8];
-                mst_req.w.strb[b + mst_port_offset - slv_port_offset] = slv_req_i.w.strb[b]       ;
+                w_data[b+mst_port_offset-slv_port_offset]         = slv_req_i.w.data[8*b+:8];
+                mst_req.w.strb[b+mst_port_offset-slv_port_offset] = slv_req_i.w.strb[b];
               end
             end
             mst_req.w.data = w_data;
@@ -820,9 +822,11 @@ module axi_dw_downsizer #(
             end
 
             W_INCR_DOWNSIZE, W_SPLIT_INCR_DOWNSIZE: begin
-              if (w_req_q.burst_len == 0 ||
-                  (aligned_addr(w_req_d.aw.addr, w_req_q.orig_aw_size) !=
-                   aligned_addr(w_req_q.aw.addr, w_req_q.orig_aw_size)   )) begin
+              if (w_req_q.burst_len == 0 || (aligned_addr(
+                  w_req_d.aw.addr, w_req_q.orig_aw_size
+                ) != aligned_addr(
+                  w_req_q.aw.addr, w_req_q.orig_aw_size
+                ))) begin
                 slv_resp_o.w_ready = 1'b1;
               end
             end
